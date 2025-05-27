@@ -10,18 +10,46 @@ const server = http.createServer((req, res) => {
     // If the token is valid, send the HTML page with a button
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(`
-      <!DOCTYPE html>
+     <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Welcome!</title>
         <style>
-          body { font-family: Arial, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f0f0; }
-          .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); text-align: center; }
-          button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; transition: background-color 0.3s ease; }
-          button:hover { background-color: #0056b3; }
-          h1 { color: #333; }
+          body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+          }
+          .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+          }
+          button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+          }
+          button:hover {
+            background-color: #0056b3;
+          }
+          h1 {
+            color: #333;
+          }
         </style>
       </head>
       <body>
@@ -30,10 +58,10 @@ const server = http.createServer((req, res) => {
           <button onclick="sendMessage()">Click Me</button>
           <p id='result'></p>
         </div>
-      </body>
-      <script>
-        function sendMessage() {
-         const message = "success";
+
+        <script>
+          function sendMessage() {
+            const message = "success";
 
             if (window.AndroidInterface && typeof window.AndroidInterface.onMessage === "function") {
               window.AndroidInterface.onMessage(message);
@@ -44,8 +72,17 @@ const server = http.createServer((req, res) => {
             }
 
             document.getElementById('result').textContent = "Message sent: " + message;
-        }
-      </script>
+          }
+
+          // Display query params
+          function displayQueryParams() {
+            const val = window.location.search;
+            document.getElementById('result').textContent = val.slice(1, val.length).replace("&", ", ").toString();
+          }
+
+          displayQueryParams();
+        </script>
+      </body>
       </html>
     `);
   } else {
