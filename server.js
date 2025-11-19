@@ -1,12 +1,13 @@
 const http = require("http");
 
-const port = 3000;
+const port = 4000;
 
 const server = http.createServer((req, res) => {
+  const val = req.headers.referer?.split("?").at(-1);
+  console.log(val);
   // Get the token from the request headers
-  const token = req.headers["token"];
-
-  if (token === "1234") {
+  const token = req.headers["authorization"];
+  if (token === "Bearer 1234") {
     // If the token is valid, send the HTML page with a button
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(`
@@ -35,17 +36,18 @@ const server = http.createServer((req, res) => {
             text-align: center;
           }
           button {
+            margin-bottom: 10px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            background-color: #007bff;
+            background-color: #8b99a7ff;
             color: white;
             border: none;
             border-radius: 5px;
             transition: background-color 0.3s ease;
           }
           button:hover {
-            background-color: #0056b3;
+            background-color: #76777aff;
           }
           h1 {
             color: #333;
@@ -55,33 +57,11 @@ const server = http.createServer((req, res) => {
       <body>
         <div class="container">
           <h1>Welcome, Authorized User!</h1>
-          <button onclick="sendMessage()">Click Me</button>
-          <p id='result'></p>
+          <button><a href="gapp://done">Click Me (simple)</a></button>
+          <button><a href="gapp://done?externalResultId=success">Click Me (external result ID)</a></button>
+          <p id='result'>${val}</p>
         </div>
 
-        <script>
-          function sendMessage() {
-            const message = "success";
-
-            if (window.AndroidInterface && typeof window.AndroidInterface.onMessage === "function") {
-              window.AndroidInterface.onMessage(message);
-            }
-
-            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSInterface) {
-              window.webkit.messageHandlers.iOSInterface.postMessage(message);
-            }
-
-            document.getElementById('result').textContent = "Message sent: " + message;
-          }
-
-          // Display query params
-          function displayQueryParams() {
-            const val = window.location.search;
-            document.getElementById('result').textContent = val.slice(1, val.length).replace("&", ", ").toString();
-          }
-
-          displayQueryParams();
-        </script>
       </body>
       </html>
     `);
